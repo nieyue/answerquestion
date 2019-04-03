@@ -1,0 +1,312 @@
+<div class="right-body">
+<!-- 选择题列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">选择题列表</label>
+</div>
+<div style="margin:10px;">
+<button class="btn btn-primary" onclick="business.self.addClick()">添加选择题</button>
+</div>
+<!-- 选择题列表选择end -->
+<!-- 选择题列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>选择题id</th>
+					  <th>分数</th>
+					  <th>问题</th>
+					  <th>a答案</th>
+					  <th>b答案</th>
+					  <th>c答案</th>
+					  <th>d答案</th>
+					  <th>正确的答案</th>
+					  <th>创建时间</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 选择题列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="choiceAddWrap" style="display:none">
+	<div id="choiceAdd" >
+	<label  class="text-danger">※分数</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="scoreAdd" value="5"  placeholder="0-100">
+	  </div>
+	  <label class="text-danger" >※问题</label>
+	  <div class="comment-input-margin ">
+	    <input  type="text" class="comment-input"  id="questionAdd"  placeholder="问题" ></input>
+	  </div>
+	  <label class="text-danger" >※a答案</label>
+	  <div class="comment-input-margin ">
+	    <input  type="text" class="comment-input"  id="aAdd"  placeholder="a答案" ></input>
+	  </div>
+	  <label class="text-danger" >※b答案</label>
+	  <div class="comment-input-margin ">
+	    <input  type="text" class="comment-input"  id="bAdd"  placeholder="b答案" ></input>
+	  </div>
+	  <label class="text-danger" >※c答案</label>
+	  <div class="comment-input-margin ">
+	    <input  type="text" class="comment-input"  id="cAdd"  placeholder="c答案" ></input>
+	  </div>
+	  <label class="text-danger" >※d答案</label>
+	  <div class="comment-input-margin ">
+	    <input  type="text" class="comment-input"  id="dAdd"  placeholder="d答案" ></input>
+	  </div>
+	  <label class="text-danger" >※正确的答案</label>
+		<div class="comment-input-margin ">
+			<select id="correctAdd" class="comment-input" style="width:100px">
+				<option  value="1">a</option>
+				<option  value="2">b</option>
+				<option  value="3">c</option>
+				<option  value="4">d</option>
+			</select>
+		</div>
+<!--
+	  <label class="text-danger" >※问题</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="questionAdd"  placeholder="问题" ></textarea>
+	  </div>
+-->
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="choiceAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="choiceUpdateWrap" style="display:none">
+	<div id="choiceUpdate">
+		<label  class="text-danger">※分数</label>
+		<div class=" comment-input-margin">
+			<input type="text" class=" comment-input"  id="scoreUpdate" value="5"  placeholder="0-100">
+		</div>
+		<label class="text-danger" >※问题</label>
+		<div class="comment-input-margin ">
+			<input  type="text" class="comment-input"  id="questionUpdate"  placeholder="问题" ></input>
+		</div>
+		<label class="text-danger" >※a答案</label>
+		<div class="comment-input-margin ">
+			<input  type="text" class="comment-input"  id="aUpdate"  placeholder="a答案" ></input>
+		</div>
+		<label class="text-danger" >※b答案</label>
+		<div class="comment-input-margin ">
+			<input  type="text" class="comment-input"  id="bUpdate"  placeholder="b答案" ></input>
+		</div>
+		<label class="text-danger" >※c答案</label>
+		<div class="comment-input-margin ">
+			<input  type="text" class="comment-input"  id="cUpdate"  placeholder="c答案" ></input>
+		</div>
+		<label class="text-danger" >※d答案</label>
+		<div class="comment-input-margin ">
+			<input  type="text" class="comment-input"  id="dUpdate"  placeholder="d答案" ></input>
+		</div>
+		<label class="text-danger" >※正确的答案</label>
+		<div class="comment-input-margin ">
+			<select id="correctUpdate" class="comment-input" style="width:100px">
+				<option  value="1">a</option>
+				<option  value="2">b</option>
+				<option  value="3">c</option>
+				<option  value="4">d</option>
+			</select>
+		</div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="choiceUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+    business.self.correctList=[
+        {id:1,value:'a'},
+        {id:2,value:'b'},
+        {id:3,value:'c'},
+        {id:4,value:'d'}
+    ];
+
+	//初始化列表
+	business.self.getList=function(callback){
+	    if(business.self.attribute.isFromMenu){
+            business.params.readingId=0;//没有代表独立的，非阅读理解的
+		}else{
+            business.params.readingId=business.self.attribute.readingId;//传递的参数
+		}
+
+	business.getList({
+       countUrl:'/choice/count',
+       listUrl:'/choice/list',
+       data:'choiceList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.choiceList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].choiceId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].score+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].question+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].a+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].b+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].c+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].d+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.self.correctList[business.choiceList[i].correct-1].value+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].createDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.choiceList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(business.choiceList[i])+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+business.choiceList[i].choiceId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加选择题','#choiceAddWrap','#choiceAdd');
+	    $(document).off("click","#choiceAddSubmit");
+		$(document).on("click","#choiceAddSubmit",function(){
+
+            if($("#scoreAdd").val()>100 ||$("#scoreAdd").val()<=0){
+                myUtils.myLoadingToast("0-100", function() {
+                });
+                return;
+            }
+		business.addChoice={
+            score:$("#scoreAdd").val(),
+            question:$("#questionAdd").val(),
+            a:$("#aAdd").val(),
+            b:$("#bAdd").val(),
+            c:$("#cAdd").val(),
+            d:$("#dAdd").val(),
+            correct:$("#correctAdd option:selected").val(),
+            readingId:business.params.readingId,
+		};
+		business.add({
+			url:'/choice/add',
+			requestObject:'addChoice',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(choice){
+	//显示model
+	 business.self.showModel('修改选择题','#choiceUpdateWrap','#choiceUpdate');
+	 //放置对象
+	 $("#scoreUpdate").val(choice.score);
+	 $("#questionUpdate").val(choice.question);
+	 $("#aUpdate").val(choice.a);
+	 $("#bUpdate").val(choice.b);
+	 $("#cUpdate").val(choice.c);
+	 $("#dUpdate").val(choice.d);
+	 $("#correctUpdate").find("option[value = '"+choice.correct+"']").attr("selected","selected");
+	 //绑定
+	$(document).off("click","#choiceUpdateSubmit");
+	$(document).on("click","#choiceUpdateSubmit",function(){
+	business.updateChoice=choice;//复制
+	business.updateChoice.score=$("#scoreUpdate").val();
+	business.updateChoice.question=$("#questionUpdate").val();
+	business.updateChoice.a=$("#aUpdate").val();
+	business.updateChoice.b=$("#bUpdate").val();
+	business.updateChoice.c=$("#cUpdate").val();
+	business.updateChoice.d=$("#dUpdate").val();
+	business.updateChoice.correct=$("#correctUpdate option:selected").val()
+	 business.update({
+      url:"/choice/update",
+      requestObject:'updateChoice',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(choiceId){
+     business.deleteChoice={
+		choiceId:choiceId
+	 };
+      business.delete({
+      url:"/choice/delete",
+      requestObject:'deleteChoice',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+</script>

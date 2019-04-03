@@ -1,0 +1,44 @@
+数据格式：
+错误示例：
+{
+"code":40000,
+"msg":"系统内部错误",
+"data":{}
+}
+正确示例：
+单个：
+{
+"code":200,
+"msg":"成功",
+"data":{
+	"account":{
+		"accountId":1,
+		"createDate":"2018-04-19 17:38:02",
+		"loginDate":"2018-04-19 17:38:02",
+		"password":"11874bb6149dd45428da628c9766b252",
+		"phone":"15111336587",
+		"realname":"聂跃",
+		"role":{},
+		"roleId":5
+		}
+		}
+}
+多个：
+{
+"code":200,
+"msg":"成功",
+"data":{
+	"list":[
+			{
+			"accountId":1,
+			"createDate":"2018-04-19 17:38:02",
+			"loginDate":"2018-04-19 17:38:02",
+			"password":"11874bb6149dd45428da628c9766b252",
+			"phone":"15111336587",
+			"realname":"聂跃",
+			"role":{},
+			"roleId":5
+			}
+			]
+		}
+}

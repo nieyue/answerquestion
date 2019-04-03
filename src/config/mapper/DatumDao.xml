@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.DatumDao">
+<!-- 添加 -->
+<insert id="add" parameterType="Datum" keyProperty="datumId" flushCache="true"  >
+   INSERT IGNORE INTO
+   		  datum_tb
+   		 (
+   		 title,
+   		 link,
+   		 create_date,
+   		 update_date,
+   		 account_id
+   		 )
+   VALUES
+    	 (
+    	 #{title},
+    	 #{link},
+    	 #{createDate},
+    	 #{updateDate},
+    	 #{accountId}
+    	 )
+</insert>  
+<!-- 更新 -->
+<update id="update" parameterType="Datum" >
+    UPDATE
+	datum_tb
+    <set>
+		<if test="title!=null">
+			title=#{title},
+		</if>
+		<if test="link!=null">
+			link=#{link},
+		</if>
+		<if test="createDate!=null">
+			create_date=#{createDate},
+		</if>
+		<if test="updateDate!=null">
+			update_date=#{updateDate},
+		</if>
+		<if test="accountId!=null">
+			account_id=#{accountId},
+		</if>
+	</set>
+    WHERE
+		datum_id=#{datumId}
+</update> 
+<!-- 删除-->
+<delete id="delete"  parameterType="Integer" >
+    DELETE FROM
+    	 datum_tb
+    	 WHERE datum_id=#{datumId}
+</delete>  
+<!-- 加载-->
+<select id="load" parameterType="Integer" resultType="Datum" >
+SELECT 
+		 datum_id,
+	 	 title,
+   		 link,
+   		 create_date,
+   		 update_date,
+   		 account_id
+FROM datum_tb
+WHERE datum_id=#{datumId}
+</select>
+
+<!-- 列表-->
+<select id="list" resultType="Datum">
+        SELECT
+			datum_id,
+			title,
+			link,
+			create_date,
+			update_date,
+			account_id
+	FROM datum_tb
+	<where>
+		<if test="accountId!=null">
+			account_id=#{accountId},
+		</if>
+		AND ${orderName}
+		<if test="orderWay=='asc'">
+		<![CDATA[>=]]>
+		</if>
+		<if test="orderWay=='desc'">
+		  <![CDATA[<= ]]>
+		</if>
+		(SELECT ${orderName} FROM datum_tb
+			<where>
+				<if test="accountId!=null">
+					account_id=#{accountId},
+				</if>
+			</where>
+			ORDER BY
+				${orderName}  ${orderWay}
+			LIMIT #{pageNum}, 1
+		)
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 数目 -->
+<select id="count"  resultType="int">
+	SELECT
+	 	count(datum_id)
+	FROM datum_tb
+	<where>
+		<if test="accountId!=null">
+			account_id=#{accountId},
+		</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

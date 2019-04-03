@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AnswerDao">
+<!-- 添加 -->
+<insert id="add" parameterType="Answer" keyProperty="answerId" flushCache="true"  >
+   INSERT IGNORE INTO
+   		  answer_tb
+   		 (
+   		 title,
+   		 content,
+   		 create_date,
+   		 update_date,
+   		 problem_id
+   		 )
+   VALUES
+    	 (
+    	 #{title},
+    	 #{content},
+    	 #{createDate},
+    	 #{updateDate},
+    	 #{problemId}
+    	 )
+</insert>  
+<!-- 更新 -->
+<update id="update" parameterType="Answer" >
+    UPDATE
+		answer_tb
+    <set>
+		<if test="title!=null">
+			title=#{title},
+		</if>
+		<if test="content!=null">
+			content=#{content},
+		</if>
+		<if test="createDate!=null">
+			create_date=#{createDate},
+		</if>
+		<if test="updateDate!=null">
+			update_date=#{updateDate},
+		</if>
+		<if test="problemId!=null">
+			problem_id=#{problemId},
+		</if>
+	</set>
+    WHERE
+		answer_id=#{answerId}
+</update> 
+<!-- 删除-->
+<delete id="delete"  parameterType="Integer" >
+    DELETE FROM
+    	 answer_tb
+    	 WHERE answer_id=#{answerId}
+</delete>  
+<!-- 加载-->
+<select id="load" parameterType="Integer" resultType="Answer" >
+SELECT 
+		 answer_id,
+	 	 title,
+   		 content,
+   		 create_date,
+   		 update_date,
+   		 problem_id
+FROM answer_tb
+WHERE answer_id=#{answerId}
+</select>
+
+<!-- 列表-->
+<select id="list" resultType="Answer">
+        SELECT
+			answer_id,
+			title,
+			content,
+			create_date,
+			update_date,
+			problem_id
+	FROM answer_tb
+	<where>
+		<if test="problemId!=null">
+			problem_id=#{problemId},
+		</if>
+		AND ${orderName}
+		<if test="orderWay=='asc'">
+		<![CDATA[>=]]>
+		</if>
+		<if test="orderWay=='desc'">
+		  <![CDATA[<= ]]>
+		</if>
+		(SELECT ${orderName} FROM answer_tb
+			<where>
+				<if test="problemId!=null">
+					problem_id=#{problemId},
+				</if>
+			</where>
+			ORDER BY
+				${orderName}  ${orderWay}
+			LIMIT #{pageNum}, 1
+		)
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 数目 -->
+<select id="count"  resultType="int">
+	SELECT
+	 	count(answer_id)
+	FROM answer_tb
+	<where>
+		<if test="problemId!=null">
+			problem_id=#{problemId},
+		</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

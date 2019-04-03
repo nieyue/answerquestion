@@ -1,0 +1,210 @@
+<div class="right-body">
+<!-- 学院列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">学院列表</label>
+</div>
+<div style="margin:10px;">
+<button class="btn btn-primary" onclick="business.self.addClick()">添加学院</button>
+</div>
+<!-- 学院列表选择end -->
+<!-- 学院列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>学院id</th>
+					  <th>名称</th>
+					  <th>描述</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 学院列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="academyAddWrap" style="display:none">
+	<div id="academyAdd" >
+	<label  class="text-danger">※名称</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="nameAdd"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※描述</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="dutyAdd"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="academyAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="academyUpdateWrap" style="display:none">
+	<div id="academyUpdate">
+	<label  class="text-danger">※名称</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="nameUpdate"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※描述</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="dutyUpdate"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="academyUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+ 
+	//初始化列表
+	business.self.getList=function(callback){
+	business.getList({
+       countUrl:'/academy/count',
+       listUrl:'/academy/list',
+       data:'academyList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.academyList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.academyList[i].academyId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.academyList[i].name+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.academyList[i].duty+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.academyList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<button class='btn btn-info' onclick='business.self.goMajor("+ JSON.stringify(business.academyList[i])+")'>专业管理</span>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(business.academyList[i])+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+business.academyList[i].academyId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加学院','#academyAddWrap','#academyAdd');
+	    $(document).off("click","#academyAddSubmit");
+		$(document).on("click","#academyAddSubmit",function(){
+		business.addAcademy={
+		name:$("#nameAdd").val(),
+		duty:$("#dutyAdd").val()
+		};
+		business.add({
+			url:'/academy/add',
+			requestObject:'addAcademy',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+    /**
+     *  专业管理
+     */
+    business.self.goMajor=function(academy){
+        //标记不是从菜单栏来的
+        business.self.attribute.isFromMenu=false;
+        //设置传递参数
+        business.self.attribute.academyId=academy.academyId;
+        //加载
+        $(".content_main").load(business.domainUrl+"/main/major.html");
+    };
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(academy){
+	//显示model
+	 business.self.showModel('修改学院','#academyUpdateWrap','#academyUpdate');
+	 //放置对象
+	 $("#nameUpdate").val(academy.name)
+	 $("#dutyUpdate").val(academy.duty)
+	 //绑定
+	$(document).off("click","#academyUpdateSubmit");
+	$(document).on("click","#academyUpdateSubmit",function(){
+	business.updateAcademy=academy;//复制
+	business.updateAcademy.name=$("#nameUpdate").val(),
+	business.updateAcademy.duty=$("#dutyUpdate").val(),
+	 business.update({
+      url:"/academy/update",
+      requestObject:'updateAcademy',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(academyId){
+     business.deleteAcademy={
+		academyId:academyId
+	 };
+      business.delete({
+      url:"/academy/delete",
+      requestObject:'deleteAcademy',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+</script>

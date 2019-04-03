@@ -1,0 +1,289 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台管理</title>
+<link href="resources/css/bootstrap.min.css" rel="stylesheet">
+ <link rel="stylesheet" type="text/css" href="resources/css/metisMenu.min.css"/>
+     <link href="resources/css/sellerbase.css" rel="stylesheet">
+
+<style>
+	html body{
+		padding: 0px;
+		margin: 0px;
+		list-style: none;
+		font-family: "Microsoft YaHei";
+		font-size:16px;
+	}
+	table tr th{
+	border:1px solid #999 !important;
+	
+	}
+	table tr td{
+	border:1px solid #999 !important;
+	
+	}
+	.wrap{
+		margin: 0 auto;
+		width:100% !important;
+		height:100%;
+		/* background:url(/static/images/2.jpg) ; */
+		background-size:100% 100%;
+		/* background-color: #ece6e4; */
+	}
+	.wrap a{
+		text-decoration:none;
+	}
+	
+	.top_div{
+		position: fixed;
+		width:100%;
+		height:60px;
+		background-color: #fff;
+		line-height: 60px;
+		border-bottom:1px solid  #999;
+		z-index:999999;
+		
+	}
+	.title_top{
+		position: absolute;
+		color: #ec0f41;
+		font-weight: bold;
+		font-size: 20px;
+		left:3%;
+	}
+	.role_name{
+	font-size:1rem;
+	color:#4f8cea;
+	}
+	.cls_top{
+		position: absolute;
+	    width: 193px;
+	    height: 60px;
+	    left: 81%;
+	    text-align: center;
+	}
+	.name_top{
+		position: relative;
+	    color: white;
+	    font-size: 16px;
+	    width: 135px;
+	    float: left;
+	}
+	
+	.name_top a{
+		position: relative;
+	    color: #000;
+	    font-size: 16px;
+	    width: 135px;
+	    float: left;
+	}
+	
+	
+	.exit_top{
+		position: relative;
+	    color: white;
+	    font-size: 20px;
+	    width: 55px;
+	    line-height: 60px;
+	    background-color: #ececec;
+	    float: left;
+	}
+	.exit_top a{
+		position: relative;
+	    color: white;
+	    font-size: 20px;
+	    width: 55px;
+	    line-height: 60px;
+	    background-color: #a84eec;
+	    float: left;
+	}
+	.content_main{
+		margin-top:60px;
+		border-bottom:60px solid transparent;
+		position:absolute;
+		left:250px;
+		/* min-height:900px; */
+		min-width:800px;
+		padding: 8px;
+		width:calc(100vw - 280px);
+	}
+	.show_content{
+		font-size: 20px;
+		color:#000;
+		margin-bottom:5px;
+	}
+	.right-body{
+	background-color:#fff;
+	padding:5px;
+	border:1px solid #ececec;
+	box-shadow:0 0 0 4px #fff;
+	border-radius:10px;
+	}
+/*是否退出提示框*/	 
+	.hid_div{
+		position: absolute;
+	    width: 100%;
+	    height: 100%;
+	    background-color: #ccc;
+	    opacity: 0.5;
+	    display:none;
+	}
+	.hid_main{
+		position: absolute;
+	    width: 200px;
+	    height: 120px;
+	    background-color: #607D8B;
+	    border-radius:5px;
+	    box-shadow :0 0 0 2px #fff;
+	    top: 36%;
+	    left: 50%;
+	    text-align: center;
+	    padding: 19px;
+	    display:none
+	}
+	.hid_font{
+		position: absolute;
+	    font-size: 18px;
+	    color: white;
+	    top: 20px;
+	    left: 40px;
+	}
+	#sure{
+		position: absolute;
+	    left: 18px;
+	    top: 75px;
+	}
+	#off{
+		position: absolute;
+	    top: 75px;
+	    left: 130px;
+	}
+	/**
+	**分页
+	*/
+	.page_div{
+	text-align:right;
+	}
+	.page_font{
+	color:red;
+	}
+	.page_label{
+	}
+	
+	
+	</style>
+
+
+</head>
+<body>
+	<div class="wrap">
+		<div class="top_div">
+			<div class="title_top">后台管理
+				<span class="role_name"></span>
+			</div>
+			<div class="cls_top">
+				<div class="name_top"><a href="javascript:;"></a></div>
+				<div class="exit_top"><a href="javascript:;" onclick="business.loginout()">退出</a></div>
+			</div>
+		</div>
+		<!-- 左边导航 -->
+		<div class="clearfix metismenu ">
+			<aside class="sidebar boxShaow">
+				<nav class="sidebar-nav" style="background-image:linear-gradient(to right,#ccc 0, #000 0 )">
+					<ul id="leftBar">
+						<li>
+							<a id="index" onclick="business.clickLeftMenu('index')">
+								<span class="glyphicon glyphicon-home"></span>
+								<span class="text-center">首页</span>
+							</a>
+						</li>
+						<li  id="accountListMenu">
+							<a href="javascript:;"  >
+								<span class="glyphicon glyphicon-duplicate"></span>
+								<span >账户管理</span>
+								<span class="glyphicon arrow"></span>
+							</a>
+							<ul>
+								<li id="teacherMenu"><a class="text-center"   onclick="business.clickLeftMenu('teacher')">教师管理</a></li>
+								<li id="studentMenu"><a class="text-center"   onclick="business.clickLeftMenu('student')">学生管理</a></li>
+							</ul>
+						</li>
+						<li  id="academyListMenu">
+							<a href="javascript:;"  >
+								<span class="glyphicon glyphicon-duplicate"></span>
+								<span >学院管理</span>
+								<span class="glyphicon arrow"></span>
+							</a>
+							<ul>
+								<li id="academyMenu"><a class="text-center"   onclick="business.clickLeftMenu('academy')">学院管理</a></li>
+							</ul>
+						</li>
+					<!--	<li  id="resultListMenu">
+							<a href="javascript:;" >
+								<span class="glyphicon glyphicon-cd"></span>
+								<span >考试成绩管理</span>
+								<span class="glyphicon arrow"></span>
+							</a>
+							<ul>
+								<li><a class="text-center" id="examinationMenu"  onclick="business.clickLeftMenu('examination')">考试</a></li>
+								<li><a class="text-center" id="resultMenu" onclick="business.clickLeftMenu('result')">成绩管理</a></li>
+							</ul>
+						</li>-->
+						<li  id="accountMenu">
+							<a href="javascript:;" >
+								<span class="glyphicon glyphicon-list-alt"></span>
+								<span >我的</span>
+								<span class="glyphicon arrow"></span>
+							</a>
+							<ul>
+								<li><a class="text-center"  onclick="business.clickLeftMenu('account')">账户</a></li>
+							</ul>
+						</li>
+					</ul>
+				</nav>
+			</aside>
+		</div> 
+		<!-- end leftmenu -->
+		<div class="content_main">
+		</div>
+		
+		<!-- 按钮触发模态框 -->
+		<button class="hide" data-toggle="modal" 
+		   data-target="#myModal" id="mySellerModal">
+		</button>
+			<!-- 模态框（Modal） -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+		   aria-labelledby="myModalLabel" aria-hidden="true">
+		   <div class="modal-dialog" >
+		      <div class="modal-content">
+		         <div class="modal-header">
+		            <button type="button" class="close" 
+		               data-dismiss="modal" aria-hidden="true" id="closeModal">
+		                  &times;
+		            </button>
+		            <h4 class="modal-title" id="mySellerModalLabel">
+		            </h4>
+		         </div>
+		         <div class="modal-body" id="mySellerModalBody">
+		         </div>
+		        <!--  <div class="modal-footer">
+		         	<div id="errorSellerInfo" class="text-justify text-danger"></div>
+		            <button type="button" class="btn btn-primary" id="sellerSubmit">
+		              	 提交
+		            </button>
+		         </div> -->
+		      </div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</div>
+<script type="text/javascript" src="resources/js/jquery1.9.js"></script>
+<script type="text/javascript" src="resources/js/bootstrap3.2.0.js"></script>
+<script src="resources/js/metisMenu.min.js"></script>
+<script type="text/javascript" src="resources/js/base.js"></script>
+<script type="text/javascript" src="business.js"></script>
+<script>
+
+	
+</script>	
+</body>
+</html>

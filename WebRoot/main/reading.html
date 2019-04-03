@@ -1,0 +1,211 @@
+<div class="right-body">
+<!-- 阅读理解列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">阅读理解列表</label>
+</div>
+<div style="margin:10px;">
+<button class="btn btn-primary" onclick="business.self.addClick()">添加阅读理解</button>
+</div>
+<!-- 阅读理解列表选择end -->
+<!-- 阅读理解列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>阅读理解id</th>
+					  <th>内容</th>
+					  <th>创建时间</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 阅读理解列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="readingAddWrap" style="display:none">
+	<div id="readingAdd" >
+	<label  class="text-danger">※内容</label>
+	  <div class=" comment-input-margin">
+	    <textarea type="text" style="width:100%" rows="10" id="contentAdd"  placeholder="0-20000"></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="readingAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="readingUpdateWrap" style="display:none">
+	<div id="readingUpdate">
+		<label  class="text-danger">※内容</label>
+		<div class=" comment-input-margin">
+			<textarea type="text" style="width:100%" rows="10"  id="contentUpdate"   placeholder="0-20000"></textarea>
+		</div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="readingUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+	//初始化列表
+	business.self.getList=function(callback){
+	business.getList({
+       countUrl:'/reading/count',
+       listUrl:'/reading/list',
+       data:'readingList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.readingList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.readingList[i].readingId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.readingList[i].content.substring(0,20)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.readingList[i].createDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.readingList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<button class='btn btn-success' onclick='business.self.goChoice("+ JSON.stringify(business.readingList[i])+")'>问题</span>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(business.readingList[i])+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+business.readingList[i].readingId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+
+    /**
+     **跳转问题
+     */
+    business.self.goChoice=function(reading){
+        //标记不是从菜单栏来的
+        business.self.attribute.isFromMenu=false;
+        //设置传递参数
+        business.self.attribute.readingId=reading.readingId;
+        //加载
+        $(".content_main").load(business.domainUrl+"/main/choice.html");
+    };
+
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加阅读理解','#readingAddWrap','#readingAdd');
+	    $(document).off("click","#readingAddSubmit");
+		$(document).on("click","#readingAddSubmit",function(){
+
+            if($("#contentAdd").val().length<=0 ||$("#contentAdd").val().length>20000){
+                myUtils.myLoadingToast("0-20000", function() {
+                });
+                return;
+            }
+		business.addreading={
+            content:$("#contentAdd").val(),
+		};
+		business.add({
+			url:'/reading/add',
+			requestObject:'addreading',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(reading){
+	//显示model
+	 business.self.showModel('修改阅读理解','#readingUpdateWrap','#readingUpdate');
+	 //放置对象
+	 $("#contentUpdate").val(reading.content);
+	 //绑定
+	$(document).off("click","#readingUpdateSubmit");
+	$(document).on("click","#readingUpdateSubmit",function(){
+	business.updatereading=reading;//复制
+	business.updatereading.content=$("#contentUpdate").val();
+        if($("#contentUpdate").val().length<=0 ||$("#contentUpdate").val().length>20000){
+            myUtils.myLoadingToast("0-20000", function() {
+            });
+            return;
+        }
+	 business.update({
+      url:"/reading/update",
+      requestObject:'updatereading',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(readingId){
+     business.deletereading={
+		readingId:readingId
+	 };
+      business.delete({
+      url:"/reading/delete",
+      requestObject:'deletereading',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+</script>

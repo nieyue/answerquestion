@@ -1,0 +1,129 @@
+<div class="right-body">
+<!-- 考试成绩列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">考试成绩列表</label>
+</div>
+<!-- 考试成绩列表选择end -->
+<!-- 考试成绩列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>考试成绩id</th>
+					  <th>姓名</th>
+					  <th>分数</th>
+					  <th>评价</th>
+					  <th>开始时间</th>
+					  <th>结束时间</th>
+					  <th>创建时间</th>
+					  <th>更新时间</th>
+					  <th>操作</th>
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 考试成绩列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+</div>
+<script>
+
+	//初始化列表
+	business.self.getList=function(callback){
+        business.params.accountId=business.sessionAccount.accountId
+        business.params.status=2
+	business.getList({
+       countUrl:'/result/count',
+       listUrl:'/result/list',
+       data:'resultList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.resultList.length;i++){
+           var scorevalue=business.resultList[i].score;
+           var comment=scorevalue>=90?'优秀':scorevalue>=80?'良':scorevalue>=60?'合格':'不合格'
+		   var classcomment=scorevalue>=60?'btn btn-success':'btn btn-danger'
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.resultList[i].resultId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.sessionAccount.realname+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.resultList[i].score+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span class='"+classcomment+"' onclick='business.resetResult("+JSON.stringify(business.resultList[i])+")' >"+comment+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.resultList[i].startDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.resultList[i].endDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.resultList[i].createDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.resultList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span class='btn btn-danger' onclick='business.exportExcel("+JSON.stringify(business.resultList[i])+")' >>下载附件</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	//重修
+	business.resetResult=function(result){
+	    if(result.score<60){
+	        //getQrCode
+			var p=location.protocol+"//"+location.host+"/resetResult.html?result="+result.score+"&accountId="+business.sessionAccount.accountId;
+            console.log(p)
+            var html='<div>' +
+                '<div>扫码重修</div>' +
+                '<div style="text-align:center;"><img src="'+("/tool/getQrCode?url="+encodeURIComponent(p))+'" style="width:20%;"/></div>' +
+                '</div>'
+            myUtils.myTemplate(html)
+        }
+	}
+	//下载附件
+	business.exportExcel=function(result){
+        $.ajax({
+            url:"/result/exportExcel?resultId="+result.resultId+"&accountId="+business.sessionAccount.accountId,
+            type:"get",
+            success:function(data){
+            location.href=data;
+            }
+        });
+	}
+</script>

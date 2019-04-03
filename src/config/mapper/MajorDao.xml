@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.MajorDao">
+<!-- 添加 -->
+<insert id="add" parameterType="Major" keyProperty="majorId" flushCache="true"  >
+   INSERT IGNORE INTO
+   		  major_tb
+   		 (
+   		 name,
+   		 duty,
+   		 create_date,
+   		 update_date,
+   		 academy_id
+   		 )
+   VALUES
+    	 (
+    	 #{name},
+    	 #{duty},
+    	 #{createDate},
+    	 #{updateDate},
+    	 #{academyId}
+    	 )
+</insert>  
+<!-- 更新 -->
+<update id="update" parameterType="Major" >
+    UPDATE 
+    	major_tb
+    <set>
+		<if test="name!=null">
+			name=#{name},
+		</if>
+		<if test="duty!=null">
+			duty=#{duty},
+		</if>
+		<if test="createDate!=null">
+			create_date=#{createDate},
+		</if>
+		<if test="updateDate!=null">
+			update_date=#{updateDate},
+		</if>
+		<if test="academyId!=null">
+			academy_id=#{academyId},
+		</if>
+	</set>
+    WHERE
+    	 major_id=#{majorId}
+</update> 
+<!-- 删除-->
+<delete id="delete"  parameterType="Integer" >
+    DELETE FROM
+    	 major_tb
+    	 WHERE major_id=#{majorId}
+</delete>  
+<!-- 加载-->
+<select id="load" parameterType="Integer" resultType="Major" >
+SELECT 
+		major_id,
+	 	name,
+    	duty,
+    	create_date,
+    	update_date,
+    	academy_id
+FROM major_tb
+WHERE major_id=#{majorId}
+</select>
+
+<!-- 列表-->
+<select id="list" resultType="Major">
+        SELECT
+		major_id,
+	 	name,
+    	duty,
+		create_date,
+    	update_date,
+		academy_id
+	FROM major_tb
+	<where>
+		<if test="academyId!=null">
+			AND academy_id=#{academyId}
+		</if>
+		AND ${orderName}
+		<if test="orderWay=='asc'">
+		<![CDATA[>=]]>
+		</if>
+		<if test="orderWay=='desc'">
+		  <![CDATA[<= ]]>
+		</if>
+		(SELECT ${orderName} FROM major_tb
+			<where>
+				<if test="academyId!=null">
+					AND academy_id=#{academyId}
+				</if>
+			</where>
+			ORDER BY
+				${orderName}  ${orderWay}
+			LIMIT #{pageNum}, 1
+		)
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 数目 -->
+<select id="count"  resultType="int">
+	SELECT
+	 	count(major_id)
+	FROM major_tb
+	<where>
+		<if test="academyId!=null">
+			AND academy_id=#{academyId}
+		</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

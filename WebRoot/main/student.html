@@ -1,0 +1,249 @@
+<div class="right-body">
+<!-- 学生列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">学生列表</label>
+</div>
+<div style="margin:10px;">
+<button class="btn btn-primary addRoleMenu" onclick="business.self.addClick()">添加学生</button>
+</div>
+<!-- 学生列表选择end -->
+<!-- 学生列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <!-- <th>学生id</th> -->
+					  <th>学生编号</th>
+					  <th>姓名</th>
+					  <th>性别</th>
+					  <th>创建时间</th>
+					  <th>最后登陆时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 学生列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+<!-- add -->
+<div id="studentAddWrap" style="display:none">
+	<div id="studentAdd" >
+	<label  class="text-danger">※姓名</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="realnameAdd"  placeholder="2-16位">
+	  </div>
+	    <label class="text-danger" >性别</label>
+	  <div class="comment-input-margin ">
+	     <select id="sexAdd" style="width:100px">
+		  </select>
+	  </div>
+	    <label  class="text-danger">※密码</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="passwordAdd"   placeholder="6-16位">
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="studentAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="studentUpdateWrap" style="display:none">
+	<div id="studentUpdate">
+	<label  class="text-danger">※姓名</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="realnameUpdate"  placeholder="2-16位">
+	  </div>
+	    <label class="text-danger" >性别</label>
+	  <div class="comment-input-margin ">
+	     <select id="sexUpdate" style="width:100px">
+		  </select>
+	  </div>
+	    <label  class="text-danger">※密码</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="passwordUpdate"   placeholder="6-16位">
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="studentUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+
+</div>
+<script>
+//初始化列表
+business.self.sexList=[
+	{id:0,value:'未知'},
+	{id:1,value:'男'},
+	{id:2,value:'女'}
+	];
+	var sexSelect="";
+       for(var i=0;i<business.self.sexList.length;i++){
+          sexSelect+="<option  value="+business.self.sexList[i].id+">"+business.self.sexList[i].value+"</option>";
+		}
+	$("#sexAdd").html(sexSelect);
+	$("#sexUpdate").html(sexSelect);
+	business.self.getList=function(callback){
+  	//请求参数分角色
+ 	for(var i=0;i<business.roleList.length;i++){
+			if(business.roleList[i].name=='学生'){
+ 				business.params.roleId=business.roleList[i].roleId;
+			}
+	}
+	//如果访问账户为学生自己，则只能看到自己的
+	if(business.sessionRoleId==business.params.roleId){
+	business.params.accountId=business.sessionAccountId;
+	}
+	business.getList({
+       countUrl:'/account/count',
+       listUrl:'/account/list',
+       data:'accountList',
+       success:function(){
+       var tableTbody="";
+       console.log(business)
+       for(var i=0;i<business.accountList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.accountList[i].sid+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.accountList[i].realname+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.self.sexList[business.accountList[i].sex].value+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.accountList[i].createDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.accountList[i].loginDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						        "<button class='btn btn-warning updateRoleMenu' onclick='business.self.updateClick("+ JSON.stringify(business.accountList[i])+")'>修改</span>"+
+						        "<button class='btn btn-danger deleteRoleMenu' onclick='business.self.deleteClick("+business.accountList[i].accountId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		
+		//回调
+		callback();
+       }
+     },business.params);
+     }
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+ business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加学生','#studentAddWrap','#studentAdd');
+	    $(document).off("click","#studentAddSubmit");
+		$(document).on("click","#studentAddSubmit",function(){
+		if($("#ageAdd").val()>200 ||$("#ageAdd").val()<0){
+		myUtils.myLoadingToast("0-200", function() {
+		});
+		return;
+		}
+		business.addAccount={
+		realname:$("#realnameAdd").val(),
+		sex:$("#sexAdd option:selected").val(),
+		password:$("#passwordAdd").val(),
+		roleId:business.params.roleId
+		};
+		business.add({
+			url:'/account/add',
+			requestObject:'addAccount',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(account){
+	//显示model
+	 business.self.showModel('修改学生','#studentUpdateWrap','#studentUpdate');
+	 //放置对象
+	  $("#realnameUpdate").val(account.realname);
+	 $("#sexUpdate").find("option[value = '"+account.sex+"']").attr("selected","selected");
+	 //绑定
+	$(document).off("click","#studentUpdateSubmit");
+	$(document).on("click","#studentUpdateSubmit",function(){
+	business.updateAccount=account;//复制
+		delete business.updateAccount.role
+	business.updateAccount.realname=$("#realnameUpdate").val();
+	business.updateAccount.sex=$("#sexUpdate option:selected").val();
+	business.updateAccount.password=$("#passwordUpdate").val();
+        if($("#passwordUpdate").val().length<6 ||$("#passwordUpdate").val().length>16){
+            myUtils.myLoadingToast("密码6-16位", function() {
+            });
+            return;
+        }
+	 business.update({
+      url:"/account/update",
+      requestObject:'updateAccount',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      });
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(accountId){
+     business.deleteAccount={
+		accountId:accountId
+	};
+      business.delete({
+      url:"/account/delete",
+      requestObject:'deleteAccount',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+</script>

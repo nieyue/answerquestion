@@ -1,0 +1,56 @@
+﻿<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
+  <diskStore path="java.io.tmpdir"/>
+
+  <!--
+  Mandatory Default Cache configuration. These settings will be applied to caches
+  created programmtically using CacheManager.add(String cacheName)
+       name:缓存名称。
+       maxElementsInMemory：缓存最大个数。
+       eternal:对象是否永久有效，一但设置了，timeout将不起作用。
+       timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。
+       timeToLiveSeconds：设置对象在失效前允许存活时间,最大时间介于创建时间和失效时间之间。仅当eternal=false对象不是永久有效时使用，默认是0.，也就是对象存活时 间无穷大。
+       overflowToDisk：当内存中对象数量达到maxElementsInMemory时，Ehcache将会对象写到磁盘中。
+       diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区。
+       maxElementsOnDisk：硬盘最大缓存个数。
+       diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store persists between restarts of the Virtual Machine. The default value is false.
+       diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。
+       memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU。你可以设置为 FIFO或是LFU。
+       clearOnFlush：内存数量最大时是否清除。
+  -->
+  <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            maxElementsOnDisk="10000000"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU">
+       <!--  <persistence strategy="localTempSwap"/> -->
+    </defaultCache>
+  
+  <!-- <cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
+       maxElementsInMemory="5000" 
+       eternal="true" 
+       overflowToDisk="true" />
+  <cache name="org.hibernate.cache.internal.StandardQueryCache"
+       maxElementsInMemory="10000" 
+       eternal="false" 
+       timeToLiveSeconds="120"
+       overflowToDisk="true" />	
+   -->
+  <!--
+  java文件注解查找cache方法名的策略：如果不指定java文件注解中的region="ehcache.xml中的name的属性值", 
+  则使用name名为com.lysoft.bean.user.User的cache(即类的全路径名称), 如果不存在与类名匹配的cache名称, 则用 defaultCache
+  如果User包含set集合, 则需要另行指定其cache
+  例如User包含citySet集合, 则也需要
+  添加配置到ehcache.xml中
+  -->	
+  <cache name="userCache" 
+  	maxElementsInMemory="2000"
+  	eternal="false" 
+    timeToIdleSeconds="120"
+    timeToLiveSeconds="120" 
+     overflowToDisk="true"  
+    />   
+    
+</ehcache>

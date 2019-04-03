@@ -1,0 +1,86 @@
+<div class="right-body">
+<!-- 账户信息选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">账户信息</label>
+</div>
+<!-- list and update -->
+<div id="sessionAccountUpdateWrap">
+	<div id="sessionAccountUpdate" >
+	  <label class="text-danger" >※编号</label>
+	  <div class="comment-input-margin ">
+	    <input type="text" class="comment-input"  id="sidUpdate"  disabled="disabled" >
+	  </div>
+	<label  class="text-danger">※姓名</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="realnameUpdate"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >性别</label>
+	  <div class="comment-input-margin ">
+	     <select id="sexUpdate" style="width:100px">
+		  </select>
+	  </div>
+	    <label  class="text-danger">※密码</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="passwordUpdate"   placeholder="6-16位">
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="sessionAccountUpdateSubmit" >保存</button>
+	  </div>
+	</div>
+</div>
+<!-- alist and update  end-->
+
+</div>
+<script>
+	//初始化
+	business.self.sexList=[
+	{id:0,value:'未知'},
+	{id:1,value:'男'},
+	{id:2,value:'女'}
+	];
+	$("#realnameUpdate").val(business.sessionAccount.realname);
+	$("#sidUpdate").val(business.sessionAccount.sid);
+	var sexSelect="";
+       for(var i=0;i<business.self.sexList.length;i++){
+          sexSelect+="<option  value="+business.self.sexList[i].id+">"+business.self.sexList[i].value+"</option>";
+		}
+	$("#sexUpdate").html(sexSelect);
+	business.self.sexList.forEach(function(elt, i, array) {
+		if(elt.id==business.sessionAccount.sex){
+		$("#sexUpdate").find("option[value = '"+elt.id+"']").attr("selected","selected");
+		}
+	})
+	$("#ageUpdate").val(business.sessionAccount.age);
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	 //绑定
+	$(document).off("click","#sessionAccountUpdateSubmit");
+	$(document).on("click","#sessionAccountUpdateSubmit",function(){
+	business.updateAccount=business.sessionAccount;//复制
+	business.updateAccount.realname=$("#realnameUpdate").val();
+	business.updateAccount.sid=$("#sidUpdate").val();
+	business.updateAccount.sex=$("#sexUpdate option:selected").val();
+	business.updateAccount.password=$("#passwordUpdate").val();
+        if($("#passwordUpdate").val().length<6 ||$("#passwordUpdate").val().length>16){
+            myUtils.myLoadingToast("密码6-16位", function() {
+            });
+            return;
+        }
+	 business.update({
+      url:"/account/update",
+      requestObject:'updateAccount',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+	  business.sessionAccount=business.updateAccount;
+	  location.href="/main.html";
+	  console.log(business.sessionAccount)
+      }
+      }); 
+	});
+
+</script>

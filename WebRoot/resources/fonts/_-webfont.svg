@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+<metadata></metadata>
+<defs>
+<font id="adzongyi-a00fzzongyim05sarial" horiz-adv-x="2048" vert-adv-y="2048" >
+<font-face units-per-em="2048" ascent="1632" descent="-416" />
+<missing-glyph horiz-adv-x="568" />
+<glyph horiz-adv-x="0" vert-adv-y="0" />
+<glyph horiz-adv-x="682" />
+<glyph unicode=" "  horiz-adv-x="568" />
+<glyph unicode="&#x09;" horiz-adv-x="568" />
+<glyph unicode="&#xa0;" horiz-adv-x="568" />
+<glyph unicode="&#x2000;" horiz-adv-x="824" vert-adv-y="0" />
+<glyph unicode="&#x2001;" horiz-adv-x="1648" vert-adv-y="0" />
+<glyph unicode="&#x2002;" horiz-adv-x="824" vert-adv-y="0" />
+<glyph unicode="&#x2003;" horiz-adv-x="1648" vert-adv-y="0" />
+<glyph unicode="&#x2004;" horiz-adv-x="549" vert-adv-y="0" />
+<glyph unicode="&#x2005;" horiz-adv-x="412" vert-adv-y="0" />
+<glyph unicode="&#x2006;" horiz-adv-x="274" vert-adv-y="0" />
+<glyph unicode="&#x2007;" horiz-adv-x="274" vert-adv-y="0" />
+<glyph unicode="&#x2008;" horiz-adv-x="206" vert-adv-y="0" />
+<glyph unicode="&#x2009;" horiz-adv-x="329" vert-adv-y="0" />
+<glyph unicode="&#x200a;" horiz-adv-x="91" vert-adv-y="0" />
+<glyph unicode="&#x202f;" horiz-adv-x="329" vert-adv-y="0" />
+<glyph unicode="&#x205f;" horiz-adv-x="412" vert-adv-y="0" />
+<glyph unicode="&#x25fc;" horiz-adv-x="880" vert-adv-y="1760" d="M0 0v880h880v-880h-880z" />
+<glyph unicode="&#x4e00;" d="M120 624v264h1840v-264h-1840z" />
+<glyph unicode="&#x767e;" d="M104 1368v264h1856v-264h-696l-40 -168h656v-1152q16 -240 -264 -232h-1424v1384h648l32 168h-768zM504 64h984q88 -16 80 80v232h-1064v-312zM504 648h1064v312h-1064v-312z" />
+<glyph unicode="&#x8350;" d="M120 536v240h64q32 -8 64 40l72 152h-200v232h272l32 64h352l-32 -64h1200v-232h-1288l-120 -312v-832h-320v712h-96zM128 1320v240h144l-16 88h344l32 -88h840l16 88h360l-24 -88h128v-240h-1824zM672 232v224h768l144 176h-904v224h1264v-192l-176 -192v-16h176v-224 h-176v-232q8 -192 -152 -184h-464v200h264q40 -8 40 40v176h-784z" />
+<glyph unicode="&#x95fb;" d="M152 -184v1640h264v-1640h-264zM408 1640h240l32 -144q0 -48 48 -40h72v-216h-224q-112 -8 -120 112zM472 -24v200h88v800h-72v232h1112v-232h-88v-800h96v-160h40q40 -8 40 56v1264h-784v264h1056v-1624q0 -168 -120 -160h-248v152h-88v-112h-240v120h-792zM816 176h440 v184h-440v-184zM816 568h440v96h-440v-96zM816 864h448v112h-448v-112z" />
+</font>
+</defs></svg> 

@@ -1,0 +1,216 @@
+<div class="right-body">
+<!-- 课程列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">课程列表</label>
+</div>
+<div style="margin:10px;">
+	<button class="btn btn-warning " onclick="business.self.goBack()">返回</button>
+	<button class="btn btn-primary" onclick="business.self.addClick()">添加课程</button>
+</div>
+<!-- 课程列表选择end -->
+<!-- 课程列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>课程id</th>
+					  <th>名称</th>
+					  <th>描述</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 课程列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="courseAddWrap" style="display:none">
+	<div id="courseAdd" >
+	<label  class="text-danger">※名称</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="nameAdd"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※描述</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="dutyAdd"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="courseAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="courseUpdateWrap" style="display:none">
+	<div id="courseUpdate">
+	<label  class="text-danger">※名称</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="nameUpdate"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※描述</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="dutyUpdate"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="courseUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+ 
+	//初始化列表
+	business.self.getList=function(callback){
+        if(business.self.attribute.isFromMenu){
+            business.params.majorId=0;//代表独立
+        }else{
+            business.params.majorId=business.self.attribute.majorId;//传递的参数
+        }
+	business.getList({
+       countUrl:'/course/count',
+       listUrl:'/course/list',
+       data:'courseList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.courseList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.courseList[i].courseId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.courseList[i].name+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.courseList[i].duty+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.courseList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(business.courseList[i])+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+business.courseList[i].CourseId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加课程','#courseAddWrap','#courseAdd');
+	    $(document).off("click","#courseAddSubmit");
+		$(document).on("click","#courseAddSubmit",function(){
+		business.addCourse={
+            majorId:business.params.majorId,
+			name:$("#nameAdd").val(),
+			duty:$("#dutyAdd").val()
+		};
+		business.add({
+			url:'/course/add',
+			requestObject:'addCourse',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(course){
+	//显示model
+	 business.self.showModel('修改课程','#courseUpdateWrap','#courseUpdate');
+	 //放置对象
+	 $("#nameUpdate").val(course.name)
+	 $("#dutyUpdate").val(course.duty)
+	 //绑定
+	$(document).off("click","#courseUpdateSubmit");
+	$(document).on("click","#courseUpdateSubmit",function(){
+	business.updateCourse=course;//复制
+	business.updateCourse.name=$("#nameUpdate").val(),
+	business.updateCourse.duty=$("#dutyUpdate").val(),
+	 business.update({
+      url:"/course/update",
+      requestObject:'updateCourse',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(courseId){
+     business.deleteCourse={
+		courseId:courseId
+	 };
+      business.delete({
+      url:"/course/delete",
+      requestObject:'deleteCourse',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+    /**
+     **返回专业管理
+     */
+    business.self.goBack=function(){
+        if(business.self.attribute.academyId){
+            //标记不是从菜单栏来的
+            business.self.attribute.isFromMenu=false;
+            //加载
+            $(".content_main").load(business.domainUrl+"/main/major.html");
+        }
+    }
+</script>

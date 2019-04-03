@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="http://www.springframework.org/schema/mvc
+	 http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+	<!-- 注解探测器 -->
+	<context:component-scan base-package="com.nieyue" >
+		<!--  将service排除在外，意味着这个时候不初始化service    -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	</context:component-scan>
+
+	<!-- @responsebody 下 '/'、'.josn'匹配json,'.xml'匹配xml  -->
+	<bean id="myDateFormatter" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="formatters">
+			<bean class="com.nieyue.comments.MyDateFormatter">
+			</bean>
+		</property>
+	</bean>
+	<bean id="myConverter" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<bean class="com.nieyue.comments.MyArgConverter">
+			</bean>
+		</property>
+	</bean>
+	<bean id="responseContentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean"
+		  p:defaultContentType="application/json;charset=UTF-8"
+		  p:ignoreAcceptHeader="true"
+		  p:favorPathExtension="true"
+		  p:favorParameter="false"
+		  p:parameterName="content">
+		<property name="mediaTypes">
+			<map>
+				<entry key="wx" value="text/x-asm;charset=UTF-8" />
+				<entry key="html" value="text/plain;charset=UTF-8" />
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+				<entry key="xls" value="application/vnd.ms-excel" />
+				<entry key="pdf" value="application/pdf"  />
+			</map>
+		</property>
+	</bean>
+
+
+	<!--非@responsebody下的 配置ViewResolver。 可以用多个ViewResolver。 使用order属性排序。 InternalResourceViewResolver放在最后。 -->
+	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean"
+		  p:defaultContentType="text/html;charset=UTF-8"
+		  p:ignoreAcceptHeader="true"
+		  p:favorPathExtension="true"
+		  p:favorParameter="false"
+		  p:parameterName="content">
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml;charset=UTF-8" />
+				<entry key="xls" value="application/vnd.ms-excel" />
+				<entry key="pdf" value="application/pdf"  />
+			</map>
+		</property>
+	</bean>
+	<bean id="myModelAndView" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver" >
+		<property name="viewResolvers">
+			<list>
+				<!-- <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+                        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+                        <property name="viewNames" value=".ftl"/>
+                        <property name="contentType" value="text/html; charset=utf-8"/>
+                        <property name="cache" value="true" />
+                        <property name="prefix" value="/" />
+                        <property name="suffix" value=".html" />
+                        <property name="order" value="5"/>
+                    </bean>  -->
+				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+					<property name="prefix" value="/WEB-INF/jsp/"/>
+					<property name="suffix" value=".jsp"/>
+					<property name="order" value="1"/>
+				</bean>
+			</list>
+		</property>
+		<property name="order" value="2" />
+		<property name="contentNegotiationManager" ref="contentNegotiationManager" />
+
+	</bean>
+	<mvc:default-servlet-handler/>
+	<!-- swagger -->
+	<mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
+	<mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
+
+	<bean class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration" id="swagger2Config">
+	</bean>
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+		<property name="maxUploadSize" value="10485760000"></property>
+		<!-- <property name="maxInMemorySize" value="1024"></property> -->
+	</bean>
+
+
+
+	<!-- 下划线转驼峰 -->
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="HttpParameterInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+	<!-- 拦截权限 -->
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*update*/**"/>
+			<bean class="com.nieyue.interceptor.SellerControllerSessionInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>   -->
+
+	<!-- ehcache缓存 不能放在applicationContext.xml中 -->
+	<!-- 		 <cache:annotation-driven cache-manager ="ehcacheCacheManager" />
+           <bean id = "ehcacheCacheManager" class= "org.springframework.cache.ehcache.EhCacheCacheManager"
+               p:cacheManager-ref= "ehcacheManager" />
+              <bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+               p:config-location="classpath:config/ehcache.xml" p:shared="true"/>-->
+</beans>

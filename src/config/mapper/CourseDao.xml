@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.CourseDao">
+<!-- 添加 -->
+<insert id="add" parameterType="Course" keyProperty="courseId" flushCache="true"  >
+   INSERT IGNORE INTO
+   		  course_tb
+   		 (
+   		 name,
+   		 duty,
+   		 create_date,
+   		 update_date,
+   		 major_id
+   		 )
+   VALUES
+    	 (
+    	 #{name},
+    	 #{duty},
+    	 #{createDate},
+    	 #{updateDate},
+    	 #{majorId}
+    	 )
+</insert>  
+<!-- 更新 -->
+<update id="update" parameterType="Course" >
+    UPDATE 
+    	course_tb
+    <set>
+		<if test="name!=null">
+			name=#{name},
+		</if>
+		<if test="duty!=null">
+			duty=#{duty},
+		</if>
+		<if test="createDate!=null">
+			create_date=#{createDate},
+		</if>
+		<if test="updateDate!=null">
+			update_date=#{updateDate},
+		</if>
+		<if test="majorId!=null">
+			major_id=#{majorId},
+		</if>
+	</set>
+    WHERE
+    	 course_id=#{courseId}
+</update> 
+<!-- 删除-->
+<delete id="delete"  parameterType="Integer" >
+    DELETE FROM
+    	 course_tb
+    	 WHERE course_id=#{courseId}
+</delete>  
+<!-- 加载-->
+<select id="load" parameterType="Integer" resultType="Course" >
+SELECT 
+		course_id,
+	 	name,
+    	duty,
+    	create_date,
+    	update_date,
+    	major_id
+FROM course_tb
+WHERE course_id=#{courseId}
+</select>
+
+<!-- 列表-->
+<select id="list" resultType="Course">
+        SELECT
+		course_id,
+	 	name,
+    	duty,
+		create_date,
+    	update_date,
+		major_id
+	FROM course_tb
+	<where>
+		<if test="majorId!=null">
+			AND major_id=#{majorId}
+		</if>
+		AND ${orderName}
+		<if test="orderWay=='asc'">
+		<![CDATA[>=]]>
+		</if>
+		<if test="orderWay=='desc'">
+		  <![CDATA[<= ]]>
+		</if>
+		(SELECT ${orderName} FROM course_tb
+			<where>
+				<if test="majorId!=null">
+					AND major_id=#{majorId}
+				</if>
+			</where>
+			ORDER BY
+				${orderName}  ${orderWay}
+			LIMIT #{pageNum}, 1
+		)
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 数目 -->
+<select id="count"  resultType="int">
+	SELECT
+	 	count(course_id)
+	FROM course_tb
+	<where>
+		<if test="majorId!=null">
+			AND major_id=#{majorId}
+		</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

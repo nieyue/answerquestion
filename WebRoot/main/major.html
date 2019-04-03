@@ -1,0 +1,227 @@
+<div class="right-body">
+<!-- 专业列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">专业列表</label>
+</div>
+<div style="margin:10px;">
+	<button class="btn btn-warning " onclick="business.self.goBack()">返回</button>
+	<button class="btn btn-primary" onclick="business.self.addClick()">添加专业</button>
+</div>
+<!-- 专业列表选择end -->
+<!-- 专业列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>专业id</th>
+					  <th>名称</th>
+					  <th>描述</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 专业列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="majorAddWrap" style="display:none">
+	<div id="majorAdd" >
+	<label  class="text-danger">※名称</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="nameAdd"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※描述</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="dutyAdd"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="majorAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="majorUpdateWrap" style="display:none">
+	<div id="majorUpdate">
+	<label  class="text-danger">※名称</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="nameUpdate"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※描述</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="dutyUpdate"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="majorUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+ 
+	//初始化列表
+	business.self.getList=function(callback){
+        if(business.self.attribute.isFromMenu){
+            business.params.academyId=0;//代表独立
+        }else{
+            business.params.academyId=business.self.attribute.academyId;//传递的参数
+        }
+	business.getList({
+       countUrl:'/major/count',
+       listUrl:'/major/list',
+       data:'majorList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.majorList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.majorList[i].majorId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.majorList[i].name+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.majorList[i].duty+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.majorList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+				              "<button class='btn btn-info' onclick='business.self.goCourse("+ JSON.stringify(business.majorList[i])+")'>课程管理</span>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(business.majorList[i])+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+business.majorList[i].majorId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加专业','#majorAddWrap','#majorAdd');
+	    $(document).off("click","#majorAddSubmit");
+		$(document).on("click","#majorAddSubmit",function(){
+		business.addMajor={
+            academyId:business.params.academyId,
+			name:$("#nameAdd").val(),
+			duty:$("#dutyAdd").val()
+		};
+		business.add({
+			url:'/major/add',
+			requestObject:'addMajor',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+    /**
+     *  课程管理
+     */
+    business.self.goCourse=function(major){
+        //标记不是从菜单栏来的
+        business.self.attribute.isFromMenu=false;
+        //设置传递参数
+        business.self.attribute.majorId=major.majorId;
+        //加载
+        $(".content_main").load(business.domainUrl+"/main/course.html");
+    };
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(major){
+	//显示model
+	 business.self.showModel('修改专业','#majorUpdateWrap','#majorUpdate');
+	 //放置对象
+	 $("#nameUpdate").val(major.name)
+	 $("#dutyUpdate").val(major.duty)
+	 //绑定
+	$(document).off("click","#majorUpdateSubmit");
+	$(document).on("click","#majorUpdateSubmit",function(){
+	business.updateMajor=major;//复制
+	business.updateMajor.name=$("#nameUpdate").val(),
+	business.updateMajor.duty=$("#dutyUpdate").val(),
+	 business.update({
+      url:"/major/update",
+      requestObject:'updateMajor',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(majorId){
+     business.deleteMajor={
+		majorId:majorId
+	 };
+      business.delete({
+      url:"/major/delete",
+      requestObject:'deleteMajor',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+
+    /**
+     **返回学院管理
+     */
+    business.self.goBack=function(){
+        if(business.self.attribute.academyId){
+            //加载
+            $(".content_main").load(business.domainUrl+"/main/academy.html");
+        }
+    }
+</script>
