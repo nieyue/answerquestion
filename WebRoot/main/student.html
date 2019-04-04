@@ -143,6 +143,7 @@ business.self.sexList=[
 						      "<span>"+business.accountList[i].loginDate+"</span>"+
 						  "</td>"+
 						  "<td>"+
+                				"<button class='btn btn-info' onclick='business.self.goStudentCourse("+ JSON.stringify(business.accountList[i])+")'>学生课程管理</span>"+
 						        "<button class='btn btn-warning updateRoleMenu' onclick='business.self.updateClick("+ JSON.stringify(business.accountList[i])+")'>修改</span>"+
 						        "<button class='btn btn-danger deleteRoleMenu' onclick='business.self.deleteClick("+business.accountList[i].accountId+")'>删除</span>"+
 						  "</td>"+
@@ -191,6 +192,17 @@ business.self.sexList=[
 		}); 
 		});
 	}
+	/**
+	 *  学生课程管理
+	 */
+	business.self.goStudentCourse=function(account){
+		//标记不是从菜单栏来的
+		business.self.attribute.isFromMenu=false;
+		//设置传递参数
+		business.self.attribute.accountId=account.accountId;
+		//加载
+		$(".content_main").load(business.domainUrl+"/main/student_course.html");
+	};
 	/**
      * 修改
      * p.url 修改url

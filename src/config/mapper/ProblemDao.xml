@@ -85,10 +85,10 @@ WHERE problem_id=#{problemId}
 	FROM problem_tb
 	<where>
 		<if test="studentCourseId!=null">
-			student_course_id=#{studentCourseId},
+			AND student_course_id=#{studentCourseId}
 		</if>
 		<if test="answerId!=null">
-			answer_id=#{answerId},
+			AND answer_id=#{answerId}
 		</if>
 		AND ${orderName}
 		<if test="orderWay=='asc'">
@@ -100,10 +100,10 @@ WHERE problem_id=#{problemId}
 		(SELECT ${orderName} FROM problem_tb
 			<where>
 				<if test="studentCourseId!=null">
-					student_course_id=#{studentCourseId},
+					AND student_course_id=#{studentCourseId}
 				</if>
 				<if test="answerId!=null">
-					answer_id=#{answerId},
+					AND answer_id=#{answerId}
 				</if>
 			</where>
 			ORDER BY
@@ -124,10 +124,10 @@ WHERE problem_id=#{problemId}
 	FROM problem_tb
 	<where>
 		<if test="studentCourseId!=null">
-			student_course_id=#{studentCourseId},
+			AND student_course_id=#{studentCourseId}
 		</if>
 		<if test="answerId!=null">
-			answer_id=#{answerId},
+			AND answer_id=#{answerId}
 		</if>
 	</where>
 </select>   

@@ -1,0 +1,248 @@
+<div class="right-body">
+<!-- 问题列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">问题列表</label>
+</div>
+<div style="margin:10px;">
+	<button class="btn btn-primary" onclick="business.self.addClick()">添加问题</button>
+</div>
+<!-- 问题列表选择end -->
+<!-- 问题列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>问题id</th>
+					  <th>标题</th>
+					  <th>内容</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 问题列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="problemAddWrap" style="display:none">
+	<div id="problemAdd" >
+		<label  class="text-danger" id="studentCourseAddLable">※学生课程</label>
+		<div class=" comment-input-margin">
+			<select id="studentCourseAdd"   style="width:300px">
+			</select>
+		</div>
+	<label  class="text-danger">※标题</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="titleAdd"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※内容</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="contentAdd"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="problemAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="problemUpdateWrap" style="display:none">
+	<div id="problemUpdate">
+		<label  class="text-danger" id="studentCourseUpdateLable">※学生课程</label>
+		<div class=" comment-input-margin">
+			<select id="studentCourseUpdate"   style="width:300px">
+			</select>
+		</div>
+	<label  class="text-danger">※标题</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="titleUpdate"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※内容</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="contentUpdate"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="problemUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+    //初始化学生课程列表
+    business.self.getStudentCourseList=function(){
+        business.getList({
+            countUrl:'/studentCourse/count',
+            listUrl:'/studentCourse/list',
+            async:false,
+            data:'studentCourseList',
+            success:function(){
+                var studentCourseSelect="";
+                for(var i=0;i<business.studentCourseList.length;i++){
+                    var studentCourse=business.studentCourseList[i];
+                    studentCourseSelect+="<option studentCourseName="+studentCourse.name+" studentCourseDuty="+studentCourse.duty+" value="+studentCourse.studentCourseId+">"+studentCourse.name+"</option>";
+                }
+                //数据
+                $("#studentCourseAdd").html(studentCourseSelect);
+                $("#studentCourseUpdate").html(studentCourseSelect);
+
+            }
+        },business.params);
+    }
+    business.self.getStudentCourseList();
+	//初始化列表
+	business.self.getList=function(callback){
+	business.getList({
+       countUrl:'/problem/count',
+       listUrl:'/problem/list',
+       data:'problemList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.problemList.length;i++){
+           var problem=business.problemList[i];
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+problem.problemId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+problem.title+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+problem.content+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+problem.updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+                			  "<button class='btn btn-info' onclick='business.self.goAnswer("+ JSON.stringify(problem)+")'>回答管理</span>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(problem)+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+problem.problemId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加问题','#problemAddWrap','#problemAdd');
+	    $(document).off("click","#problemAddSubmit");
+		$(document).on("click","#problemAddSubmit",function(){
+            if(!$("#studentCourseAdd option:selected").val()){
+                myUtils.myLoadingToast("请先添加学生课程")
+                return;
+            }
+		business.addProblem={
+            studentCourseId:$("#studentCourseAdd option:selected").val(),
+			title:$("#titleAdd").val(),
+			content:$("#contentAdd").val()
+		};
+		business.add({
+			url:'/problem/add',
+			requestObject:'addProblem',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+    /**
+     *  回答管理
+     */
+    business.self.goAnswer=function(problem){
+        //标记不是从菜单栏来的
+        business.self.attribute.isFromMenu=false;
+        //设置传递参数
+        business.self.attribute.problemId=problem.problemId;
+        //加载
+        $(".content_main").load(business.domainUrl+"/main/answer.html");
+    };
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(problem){
+	//显示model
+	 business.self.showModel('修改问题','#problemUpdateWrap','#problemUpdate');
+	 //放置对象
+	 $("#titleUpdate").val(problem.title)
+	 $("#contentUpdate").val(problem.content)
+		$("#studentCourseUpdate").find("option[value = '"+problem.studentCourseId+"']").attr("selected","selected");
+	 //绑定
+	$(document).off("click","#problemUpdateSubmit");
+	$(document).on("click","#problemUpdateSubmit",function(){
+	business.updateProblem=problem;//复制
+	business.updateProblem.title=$("#titleUpdate").val();
+	business.updateProblem.content=$("#contentUpdate").val();
+	business.updateProblem.studentCourseId=$("#studentCourseUpdate option:selected").val();
+	 business.update({
+      url:"/problem/update",
+      requestObject:'updateProblem',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(problemId){
+     business.deleteProblem={
+		problemId:problemId
+	 };
+      business.delete({
+      url:"/problem/delete",
+      requestObject:'deleteProblem',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+</script>

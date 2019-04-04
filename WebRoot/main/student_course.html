@@ -1,0 +1,235 @@
+<div class="right-body">
+<!-- 学生课程列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">学生课程列表</label>
+</div>
+<div style="margin:10px;">
+	<button class="btn btn-warning " onclick="business.self.goBack()">返回</button>
+	<button class="btn btn-primary" onclick="business.self.addClick()">添加学生课程</button>
+</div>
+<!-- 学生课程列表选择end -->
+<!-- 学生课程列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>学生课程id</th>
+					  <th>名称</th>
+					  <th>描述</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 学生课程列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="studentCourseAddWrap" style="display:none">
+	<div id="studentCourseAdd" >
+		<label  class="text-danger" id="courseAddLable">※课程</label>
+		<div class=" comment-input-margin">
+			<select id="courseAdd"   style="width:300px">
+			</select>
+		</div>
+	  <div class=" comment-input-margin" >
+		<button type="button" class="btn btn-primary" id="studentCourseAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="studentCourseUpdateWrap" style="display:none">
+	<div id="studentCourseUpdate">
+		<label  class="text-danger" id="courseUpdateLable">※课程</label>
+		<div class=" comment-input-margin">
+			<select id="courseUpdate"   style="width:300px">
+			</select>
+		</div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="studentCourseUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+    //初始化课程列表
+    business.self.getCourseList=function(){
+        business.getList({
+            countUrl:'/course/count',
+            listUrl:'/course/list',
+            async:false,
+            data:'courseList',
+            success:function(){
+                var courseSelect="";
+                for(var i=0;i<business.courseList.length;i++){
+                    var course=business.courseList[i];
+                    courseSelect+="<option courseName="+course.name+" courseDuty="+course.duty+" value="+course.courseId+">"+course.name+"</option>";
+                }
+                //数据
+                $("#courseAdd").html(courseSelect);
+                $("#courseUpdate").html(courseSelect);
+
+            }
+        },business.params);
+    }
+    business.self.getCourseList();
+
+    //初始化列表
+	business.self.getList=function(callback){
+        if(business.self.attribute.isFromMenu){
+            business.params.accountId=null;//代表所有
+        }else{
+            business.params.accountId=business.self.attribute.accountId;//传递的参数
+        }
+	business.getList({
+       countUrl:'/studentCourse/count',
+       listUrl:'/studentCourse/list',
+       data:'studentCourseList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.studentCourseList.length;i++){
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.studentCourseList[i].studentCourseId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.studentCourseList[i].name+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.studentCourseList[i].duty+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+business.studentCourseList[i].updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(business.studentCourseList[i])+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+business.studentCourseList[i].studentCourseId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加学生课程','#studentCourseAddWrap','#studentCourseAdd');
+	    $(document).off("click","#studentCourseAddSubmit");
+		$(document).on("click","#studentCourseAddSubmit",function(){
+		    if(!$("#courseAdd option:selected").val()){
+		        myUtils.myLoadingToast("请先添加课程")
+				return;
+			}
+		business.addStudentCourse={
+            accountId:business.params.accountId,
+            courseId:$("#courseAdd option:selected").val(),
+			name:$("#courseAdd option:selected").attr("courseName"),
+			duty:$("#courseAdd option:selected").attr("courseDuty")
+		};
+		business.add({
+			url:'/studentCourse/add',
+			requestObject:'addStudentCourse',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(studentCourse){
+	//显示model
+	 business.self.showModel('修改学生课程','#studentCourseUpdateWrap','#studentCourseUpdate');
+
+        $("#courseUpdate").find("option[value = '"+studentCourse.courseId+"']").attr("selected","selected");
+	 //绑定
+	$(document).off("click","#studentCourseUpdateSubmit");
+	$(document).on("click","#studentCourseUpdateSubmit",function(){
+	business.updateStudentCourse=studentCourse;//复制
+	business.updateStudentCourse.courseId=$("#courseUpdate option:selected").val();
+	business.updateStudentCourse.name=$("#courseUpdate option:selected").attr("courseName");
+	business.updateStudentCourse.duty=$("#courseUpdate option:selected").attr("courseDuty");
+	 business.update({
+      url:"/studentCourse/update",
+      requestObject:'updateStudentCourse',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(studentCourseId){
+     business.deleteStudentCourse={
+		studentCourseId:studentCourseId
+	 };
+      business.delete({
+      url:"/studentCourse/delete",
+      requestObject:'deleteStudentCourse',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+
+    /**
+     **返回学生
+     */
+    business.self.goBack=function(){
+        if(business.self.attribute.accountId){
+            //加载
+            $(".content_main").load(business.domainUrl+"/main/student.html");
+        }
+    }
+</script>

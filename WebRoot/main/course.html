@@ -85,7 +85,7 @@
 	//初始化列表
 	business.self.getList=function(callback){
         if(business.self.attribute.isFromMenu){
-            business.params.majorId=0;//代表独立
+            business.params.majorId=null;//代表所有
         }else{
             business.params.majorId=business.self.attribute.majorId;//传递的参数
         }

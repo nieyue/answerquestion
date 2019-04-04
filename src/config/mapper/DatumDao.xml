@@ -78,7 +78,7 @@ WHERE datum_id=#{datumId}
 	FROM datum_tb
 	<where>
 		<if test="accountId!=null">
-			account_id=#{accountId},
+			AND account_id=#{accountId}
 		</if>
 		AND ${orderName}
 		<if test="orderWay=='asc'">
@@ -90,7 +90,7 @@ WHERE datum_id=#{datumId}
 		(SELECT ${orderName} FROM datum_tb
 			<where>
 				<if test="accountId!=null">
-					account_id=#{accountId},
+					AND account_id=#{accountId}
 				</if>
 			</where>
 			ORDER BY
@@ -111,7 +111,7 @@ WHERE datum_id=#{datumId}
 	FROM datum_tb
 	<where>
 		<if test="accountId!=null">
-			account_id=#{accountId},
+			AND account_id=#{accountId}
 		</if>
 	</where>
 </select>   

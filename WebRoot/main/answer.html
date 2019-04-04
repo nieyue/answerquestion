@@ -1,0 +1,204 @@
+<div class="right-body">
+<!-- 回答列表选择 -->
+<div style="margin:10px;">
+<label  class="text-danger nieyueText" style="font-size:30px;color:#ccc;">回答列表</label>
+</div>
+<div style="margin:10px;">
+	<button class="btn btn-primary" onclick="business.self.addClick()">添加回答</button>
+</div>
+<!-- 回答列表选择end -->
+<!-- 回答列表 -->
+		<div style="width:100%" class="tableWrap">
+			<table class="table table-bordered" style="width:100%">
+				<!--表格头-->
+    			<thead>
+					<tr>
+					  <th>序号</th>
+					  <th>回答id</th>
+					  <th>标题</th>
+					  <th>内容</th>
+					  <th>更新时间</th>
+					  <th >操作</th> 
+					</tr>
+    			</thead>
+    			<!--表格主体-->
+    			<tbody id="tableTbody">
+				</tbody>
+			</table>
+		</div>
+<!-- 回答列表end -->
+	<!-- 页面列表end -->
+
+
+<!-- 分页 -->
+<div class="page_div">
+<!--分页条信息 -->
+	<div class="page_label" id="di">
+		<nav aria-label="Page navigation">
+	    	<ul class="pagination">
+		    </ul>
+		</nav>	
+	</div>
+<!--分页文字信息  -->
+	<div class="page_font"></div>
+</div> 
+<!--分页 end -->
+
+<!-- add -->
+<div id="answerAddWrap" style="display:none">
+	<div id="answerAdd" >
+	<label  class="text-danger">※标题</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="titleAdd"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※内容</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="contentAdd"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="answerAddSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- add end-->
+<!-- update -->
+<div id="answerUpdateWrap" style="display:none">
+	<div id="answerUpdate">
+	<label  class="text-danger">※标题</label>
+	  <div class=" comment-input-margin">
+	    <input type="text" class=" comment-input"  id="titleUpdate"  placeholder="2-16位">
+	  </div>
+	  <label class="text-danger" >※内容</label>
+	  <div class="comment-input-margin ">
+	    <textarea  class="comment-input"  id="contentUpdate"  placeholder="255位" ></textarea>
+	  </div>
+	  <div class=" comment-input-margin" >
+	    <button type="button" class="btn btn-primary" id="answerUpdateSubmit" >确定</button>
+	  </div>
+	</div>
+</div>
+<!-- update end-->
+</div>
+<script>
+	//初始化列表
+	business.self.getList=function(callback){
+        if(business.self.attribute.isFromMenu){
+            business.params.problemId=null;//代表所有
+        }else{
+            business.params.problemId=business.self.attribute.problemId;//传递的参数
+        }
+	business.getList({
+       countUrl:'/answer/count',
+       listUrl:'/answer/list',
+       data:'answerList',
+       success:function(){
+       var tableTbody="";
+       for(var i=0;i<business.answerList.length;i++){
+           var answer=business.answerList[i];
+			tableTbody+="<tr>"+
+						  "<td>"+
+						      "<span>"+(i+(business.params.currentPage-1)*business.params.pageSize+business.params.startNum)+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+answer.answerId+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+answer.title+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+answer.content+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<span>"+answer.updateDate+"</span>"+
+						  "</td>"+
+						  "<td>"+
+						      "<button class='btn btn-warning' onclick='business.self.updateClick("+ JSON.stringify(answer)+")'>修改</span>"+
+						      "<button class='btn btn-danger' onclick='business.self.deleteClick("+answer.answerId+")'>删除</span>"+
+						  "</td>"+
+						"</tr>";
+		}
+		//表格数据
+		$("#tableTbody").html(tableTbody);
+		//回调
+		callback();
+		     }
+     },business.params);
+	}
+	//初始化
+	business.initPage(business.self.getList);
+	/**
+     * 增加
+     * p.addUrl 增加url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.addClick=function(){
+     //显示model
+	 business.self.showModel('添加回答','#answerAddWrap','#answerAdd');
+	    $(document).off("click","#answerAddSubmit");
+		$(document).on("click","#answerAddSubmit",function(){
+		business.addAnswer={
+            problemId:business.params.problemId,
+			title:$("#titleAdd").val(),
+			content:$("#contentAdd").val()
+		};
+		business.add({
+			url:'/answer/add',
+			requestObject:'addAnswer',
+			success:function(){
+			 $("#closeModal").click();
+			 //初始化
+			business.initPage(business.self.getList);
+			}
+		}); 
+		});
+	}
+	/**
+     * 修改
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+	business.self.updateClick=function(answer){
+	//显示model
+	 business.self.showModel('修改回答','#answerUpdateWrap','#answerUpdate');
+	 //放置对象
+	 $("#titleUpdate").val(answer.title)
+	 $("#contentUpdate").val(answer.content)
+	 //绑定
+	$(document).off("click","#answerUpdateSubmit");
+	$(document).on("click","#answerUpdateSubmit",function(){
+	business.updateAnswer=answer;//复制
+	business.updateAnswer.title=$("#titleUpdate").val();
+	business.updateAnswer.content=$("#contentUpdate").val();
+	 business.update({
+      url:"/answer/update",
+      requestObject:'updateAnswer',
+      success:function(){
+      $("#closeModal").click();
+      //初始化
+		business.initPage(business.self.getList);
+      }
+      }); 
+	});
+	};
+	/**
+     * 删除
+     * p.url 修改url
+     * p.requestObject 请求参数对象
+     * p.success 成功回调
+     */
+     business.self.deleteClick=function(answerId){
+     business.deleteAnswer={
+         answerId:answerId
+	 };
+      business.delete({
+      url:"/answer/delete",
+      requestObject:'deleteAnswer',
+      success:function(){
+      //初始化
+	business.initPage(business.self.getList);
+      }
+      })
+     }
+</script>

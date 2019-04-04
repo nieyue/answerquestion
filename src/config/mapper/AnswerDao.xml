@@ -78,7 +78,7 @@ WHERE answer_id=#{answerId}
 	FROM answer_tb
 	<where>
 		<if test="problemId!=null">
-			problem_id=#{problemId},
+			AND problem_id=#{problemId}
 		</if>
 		AND ${orderName}
 		<if test="orderWay=='asc'">
@@ -90,7 +90,7 @@ WHERE answer_id=#{answerId}
 		(SELECT ${orderName} FROM answer_tb
 			<where>
 				<if test="problemId!=null">
-					problem_id=#{problemId},
+					AND problem_id=#{problemId}
 				</if>
 			</where>
 			ORDER BY
@@ -111,7 +111,7 @@ WHERE answer_id=#{answerId}
 	FROM answer_tb
 	<where>
 		<if test="problemId!=null">
-			problem_id=#{problemId},
+			AND problem_id=#{problemId}
 		</if>
 	</where>
 </select>   

@@ -79,7 +79,9 @@ public class AccountController {
 			throw new AccountIsNotExistException();//账户不存在
 		}
 		//账户已经存在
-		if("学生".equals(oldAccount.getRole().getName())){
+		if("学生".equals(oldAccount.getRole().getName())
+		||"教师".equals(oldAccount.getRole().getName())
+		){
 			if(//accountService.login(account.getPhone(), null,account.getAccountId())!=null||
 					accountService.login(account.getSid(), null,account.getAccountId())!=null
 			){
