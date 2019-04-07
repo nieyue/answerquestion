@@ -90,6 +90,7 @@
 <!-- update end-->
 </div>
 <script>
+	business.params=business.originParams;
     //初始化学生课程列表
     business.self.getStudentCourseList=function(){
         business.getList({
@@ -98,6 +99,7 @@
             async:false,
             data:'studentCourseList',
             success:function(){
+            	console.log(business.studentCourseList)
                 var studentCourseSelect="";
                 for(var i=0;i<business.studentCourseList.length;i++){
                     var studentCourse=business.studentCourseList[i];

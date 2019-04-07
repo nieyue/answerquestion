@@ -35,6 +35,14 @@ var business={
 	sessionRole:{},
 	//全局所有角色
 	roleList:[],
+	//请求原始参数初始
+	originParams:{
+	      startNum:1,//初始化个数
+	      currentPage:1,//当前页
+	      pageNum:1,//获取的第几个开始
+	      pageSize:10,//每页的个数
+	      total:0//总数
+	 },
 	//请求参数初始
 	params:{
 	      startNum:1,//初始化个数
@@ -43,7 +51,7 @@ var business={
 	      pageSize:10,//每页的个数
 	      total:0//总数
 	 },
-	//验证是否已经登录 
+	//验证是否已经登录
 	initIslogin:function(){
 		$.ajax({
 			url:business.domainUrl+"/account/islogin",
