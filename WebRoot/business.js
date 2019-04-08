@@ -104,6 +104,15 @@ var business={
                 if(business.sessionRole.name=="超级管理员"){
                     $("#accountListMenu").css("display","block");
 				}
+				//仅管理员可见
+				if(business.sessionRole.name!="超级管理员"){
+                    business.load({
+                        url:"/account/loginout?accountId="+business.sessionAccount.accountId,
+                        success:function(){
+                            location.href="/";
+                        }
+                    })
+				}
 				},100);
 				
 				}
