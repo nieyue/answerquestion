@@ -3,6 +3,7 @@ package com.nieyue.comments;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.nieyue.util.UploaderPath;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -53,6 +54,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/**")
                 .addResourceLocations(
                         "/",
+                        "file:"+ UploaderPath.GetValueByKey(UploaderPath.ROOTPATH) +"/",
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/v2/**",

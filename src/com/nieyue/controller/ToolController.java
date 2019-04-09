@@ -1,21 +1,23 @@
 package com.nieyue.controller;
 
+import com.nieyue.util.DateUtil;
+import com.nieyue.util.FileUploadUtil;
 import com.nieyue.util.MyQRcode;
+import com.nieyue.util.UploaderPath;
 import com.nieyue.verification.VerificationCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 
@@ -75,5 +77,26 @@ public class ToolController {
 		System.err.println(createDate);
 		return session.getId();
 
+	}
+	/**
+	 * 文件增加、修改
+	 * @return
+	 * @throws IOException
+	 */
+	@ApiOperation(value = "上传文件", notes = "上传文件")
+	@RequestMapping(value = "/file/add", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody String addFile(
+			@RequestParam("editorUpload") MultipartFile file,
+			HttpServletRequest request,HttpSession session ) throws IOException  {
+		String fileUrl = null;
+		String filedir=DateUtil.getImgDir();
+		try{
+			fileUrl = FileUploadUtil.FormDataMerImgFileUpload(file, session, UploaderPath.GetValueByKey(UploaderPath.ROOTPATH),UploaderPath.GetValueByKey(UploaderPath.IMG),filedir);
+		}catch (IOException e) {
+			throw new IOException();
+		}
+		StringBuffer url=request.getRequestURL();
+		String redirect_url = url.delete(url.length() - request.getRequestURI().length(), url.length()).toString();
+		return redirect_url+fileUrl;
 	}
 }
